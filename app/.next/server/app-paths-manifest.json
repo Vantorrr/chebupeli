@@ -1,0 +1,15 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/page": "app/page.js",
+  "/faq/page": "app/faq/page.js",
+  "/offer/page": "app/offer/page.js",
+  "/payment/page": "app/payment/page.js",
+  "/payment/fail/page": "app/payment/fail/page.js",
+  "/payment/success/page": "app/payment/success/page.js",
+  "/my-esims/page": "app/my-esims/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/legal/page": "app/legal/page.js",
+  "/tariffs/page": "app/tariffs/page.js",
+  "/support/page": "app/support/page.js",
+  "/profile/page": "app/profile/page.js"
+}
