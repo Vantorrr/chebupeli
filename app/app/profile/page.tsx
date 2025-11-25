@@ -55,7 +55,21 @@ export default function ProfilePage() {
     // Здесь можно добавить логику обновления цен во всем приложении через Context или Event
   }
 
-  const menuSections = [
+  type MenuItem = {
+    icon: () => JSX.Element
+    title: string
+    subtitle: string
+    action: () => void
+    value?: string
+    isToggle?: boolean
+  }
+
+  type MenuSection = {
+    title: string
+    items: MenuItem[]
+  }
+
+  const menuSections: MenuSection[] = [
     {
       title: 'Аккаунт',
       items: [
