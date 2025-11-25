@@ -354,8 +354,13 @@ bot.catch(async (err, ctx) => {
 });
 
 // Настройка вебхука или polling
-const PORT = process.env.PORT || 8080;
+const PORT = parseInt(process.env.PORT || '8080', 10);
 const WEBHOOK_URL = process.env.WEBHOOK_URL; // Например: https://your-domain.com/webhook
+
+console.log('🔧 Bot configuration:');
+console.log('  PORT:', PORT);
+console.log('  WEBHOOK_URL:', WEBHOOK_URL || 'not set (will use polling)');
+console.log('  TELEGRAM_BOT_TOKEN:', process.env.TELEGRAM_BOT_TOKEN ? 'set' : 'NOT SET');
 
 // Если указан WEBHOOK_URL, используем вебхук, иначе polling
 if (WEBHOOK_URL) {
