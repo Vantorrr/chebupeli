@@ -173,7 +173,7 @@ export default function ProfilePage() {
           onClick={() => webApp?.showPopup({
             title: 'Реферальная программа',
             message: 'Скоро вы сможете приглашать друзей и получать бонусы!\n\nВаш код будет доступен здесь.',
-            buttons: [{type: 'ok'}]
+            buttons: [{type: 'ok', text: 'Понятно'}]
           })}
           className="bg-gradient-to-r from-[#2F3542] to-[#1A1A1A] rounded-2xl p-5 shadow-xl text-white mb-8 relative overflow-hidden group cursor-pointer active:scale-95 transition-transform"
         >
