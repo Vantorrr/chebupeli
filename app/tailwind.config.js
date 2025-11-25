@@ -23,6 +23,15 @@ module.exports = {
       backgroundImage: {
         'velaro-gradient': 'linear-gradient(135deg, #FF6B35 0%, #FF8C69 100%)',
       },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        }
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
+      },
     },
   },
   plugins: [],
