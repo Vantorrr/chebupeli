@@ -389,6 +389,11 @@ if (WEBHOOK_URL) {
     res.json({ status: 'ok', bot: 'running' });
   });
   
+  app.use((req, res, next) => {
+    console.log(`🔔 Incoming request: ${req.method} ${req.url}`);
+    next();
+  });
+
   app.post('/webhook', async (req, res) => {
     try {
       console.log('📥 Webhook получен:', req.body?.update_id);
