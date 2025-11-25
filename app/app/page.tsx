@@ -141,8 +141,8 @@ export default function Home() {
     <div className="min-h-screen bg-[#F5F5F0] pb-20">
       {/* Top Bar with Airmoney and Logo - более стильный */}
       <div className="bg-gradient-to-r from-white to-[#FFF8F5] px-4 py-3 flex justify-between items-center shadow-sm relative">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+        <div className="flex items-center space-x-2 opacity-0">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
           <span className="text-sm font-semibold text-gray-700">Airmoney</span>
         </div>
         
