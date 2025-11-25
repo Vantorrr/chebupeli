@@ -91,7 +91,8 @@ export default function ProfilePage() {
       items: [
         { 
           icon: Icons.Sim, 
-          title: 'Мои eSIM', 
+          title: 'Мои eSIM',
+          subtitle: 'Управление установленными eSIM',
           action: () => router.push('/my-esims')
         },
       ]
@@ -101,12 +102,14 @@ export default function ProfilePage() {
       items: [
         { 
           icon: Icons.Support, 
-          title: 'Поддержка', 
+          title: 'Поддержка',
+          subtitle: 'FAQ и связь с командой',
           action: () => router.push('/support') 
         },
         { 
           icon: Icons.Doc, 
-          title: 'Правовая информация', 
+          title: 'Правовая информация',
+          subtitle: 'Оферта и конфиденциальность',
           action: () => router.push('/legal') 
         },
       ]
