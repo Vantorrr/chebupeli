@@ -376,15 +376,23 @@ if (WEBHOOK_URL) {
     res.json({ status: 'ok', bot: 'running' });
   });
   
-  bot.telegram.setWebhook(WEBHOOK_URL + '/webhook').then(() => {
-    console.log('✅ Webhook установлен:', WEBHOOK_URL + '/webhook');
-  }).catch(err => {
-    console.error('❌ Ошибка установки webhook:', err);
-  });
-  
-  app.listen(PORT, () => {
+  // Запускаем сервер сначала
+  app.listen(PORT, async () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
-    console.log(`📡 Webhook: ${WEBHOOK_URL}/webhook`);
+    
+    // Устанавливаем webhook после запуска сервера
+    try {
+      const webhookUrl = `${WEBHOOK_URL}/webhook`;
+      await bot.telegram.setWebhook(webhookUrl);
+      console.log('✅ Webhook установлен:', webhookUrl);
+      
+      // Проверяем статус webhook
+      const webhookInfo = await bot.telegram.getWebhookInfo();
+      console.log('📡 Webhook info:', JSON.stringify(webhookInfo, null, 2));
+    } catch (err) {
+      console.error('❌ Ошибка установки webhook:', err);
+      console.error('Stack:', err.stack);
+    }
   });
 } else {
   // Используем polling (для разработки)
