@@ -24,7 +24,7 @@ export default function PaymentPage() {
     }
 
     // Загрузка данных тарифа
-    const tariffId = searchParams.get('tariffId')
+    const tariffId = searchParams?.get('tariffId')
     if (tariffId) {
       loadTariff(tariffId)
     }

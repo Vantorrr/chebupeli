@@ -19,8 +19,8 @@ export default function PaymentSuccessPage() {
       webApp.expand()
     }
 
-    const paymentId = searchParams.get('paymentId')
-    const tariffId = searchParams.get('tariffId')
+    const paymentId = searchParams?.get('paymentId')
+    const tariffId = searchParams?.get('tariffId')
 
     if (paymentId && tariffId) {
       // Получение данных eSIM после успешной оплаты

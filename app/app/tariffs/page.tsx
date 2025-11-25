@@ -26,7 +26,7 @@ export default function TariffsPage() {
       webApp.BackButton.onClick(() => router.push('/'))
     }
 
-    const name = searchParams.get('name')
+    const name = searchParams?.get('name')
     if (name) {
       setCountryName(decodeURIComponent(name))
     }

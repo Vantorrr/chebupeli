@@ -26,7 +26,7 @@ export default function FAQPage() {
       webApp.BackButton.onClick(() => router.push('/support'))
     }
 
-    const category = searchParams.get('category')
+    const category = searchParams?.get('category')
     if (category) {
       setSelectedCategory(category)
     }
