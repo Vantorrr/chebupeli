@@ -32,9 +32,10 @@ const getMainMenu = () => {
 
 // Команда /start
 bot.start(async (ctx) => {
-  const userName = ctx.from?.first_name || 'пользователь';
-  
-  const welcomeText = `🌴 Добро пожаловать в Velaro, ${userName}!
+  try {
+    const userName = ctx.from?.first_name || 'пользователь';
+    
+    const welcomeText = `🌴 Добро пожаловать в Velaro, ${userName}!
 
 🚀 Цифровые интернет-пакеты для путешествий по всему миру.
 
@@ -46,12 +47,29 @@ bot.start(async (ctx) => {
 
 Выберите действие из меню ниже 👇`;
 
-  await ctx.reply(welcomeText, getMainMenu());
+    await ctx.reply(welcomeText, getMainMenu());
+  } catch (err) {
+    console.error('Ошибка в /start:', err);
+    try {
+      await ctx.reply('Добро пожаловать в Velaro! Используйте /menu для навигации.', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка в /start:', e);
+    }
+  }
 });
 
 // Команда /menu
 bot.command('menu', async (ctx) => {
-  await ctx.reply('📱 Главное меню Velaro:', getMainMenu());
+  try {
+    await ctx.reply('📱 Главное меню Velaro:', getMainMenu());
+  } catch (err) {
+    console.error('Ошибка в /menu:', err);
+    try {
+      await ctx.reply('📱 Главное меню:', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка в /menu:', e);
+    }
+  }
 });
 
 // Обработка текстовых команд
@@ -208,9 +226,18 @@ bot.action('back_to_menu', async (ctx) => {
 
 // Обработка всех остальных сообщений
 bot.on('text', async (ctx) => {
-  // Если это не команда, показываем меню
-  if (!ctx.message.text.startsWith('/')) {
-    await ctx.reply('Выберите действие из меню 👇', getMainMenu());
+  try {
+    // Если это не команда, показываем меню
+    if (!ctx.message.text.startsWith('/')) {
+      await ctx.reply('Выберите действие из меню 👇', getMainMenu());
+    }
+  } catch (err) {
+    console.error('Ошибка обработки текста:', err);
+    try {
+      await ctx.reply('Произошла ошибка. Используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
+    }
   }
 });
 
