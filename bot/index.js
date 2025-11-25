@@ -13,7 +13,7 @@ bot.use(async (ctx, next) => {
 
 // Функция для создания главного меню
 const getMainMenu = () => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   
   return Markup.keyboard([
     [
@@ -56,7 +56,7 @@ bot.command('menu', async (ctx) => {
 
 // Обработка текстовых команд
 bot.hears('🌍 Тарифы', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   await ctx.reply('🌍 Выберите страну и тариф:', {
     reply_markup: {
       inline_keyboard: [
@@ -69,7 +69,7 @@ bot.hears('🌍 Тарифы', async (ctx) => {
 });
 
 bot.hears('📲 Мои eSIM', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   await ctx.reply('📲 Ваши eSIM:', {
     reply_markup: {
       inline_keyboard: [
@@ -82,7 +82,7 @@ bot.hears('📲 Мои eSIM', async (ctx) => {
 });
 
 bot.hears('🛠 Поддержка', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   const supportText = `🛠 Поддержка Velaro
 
 Мы всегда готовы помочь!
@@ -114,7 +114,7 @@ bot.hears('🛠 Поддержка', async (ctx) => {
 });
 
 bot.hears('📄 Правовая информация', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   const legalText = `📄 Правовая информация Velaro
 
 Публичная оферта и политика конфиденциальности.
@@ -134,7 +134,7 @@ bot.hears('📄 Правовая информация', async (ctx) => {
 });
 
 bot.hears('🏠 Открыть Velaro', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   await ctx.reply('🏠 Открываю Velaro...', {
     reply_markup: {
       inline_keyboard: [
@@ -148,7 +148,7 @@ bot.hears('🏠 Открыть Velaro', async (ctx) => {
 
 // Обработка callback для поддержки
 bot.action('support', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   const supportText = `🛠 Поддержка Velaro
 
 Свяжитесь с нами:
@@ -179,7 +179,7 @@ bot.action('support', async (ctx) => {
 
 // Правовая информация
 bot.action('legal', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
   const legalText = `📄 Правовая информация
 
 Публичная оферта и политика конфиденциальности Velaro.
@@ -217,7 +217,12 @@ bot.on('text', async (ctx) => {
 // Обработка ошибок
 bot.catch((err, ctx) => {
   console.error('Ошибка в боте:', err);
-  ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu');
+  console.error('Stack:', err.stack);
+  try {
+    ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu').catch(console.error);
+  } catch (e) {
+    console.error('Не удалось отправить сообщение об ошибке:', e);
+  }
 });
 
 // Запуск бота
@@ -225,7 +230,7 @@ const PORT = process.env.PORT || 8080;
 
 bot.launch().then(() => {
   console.log('🤖 Telegram бот Velaro запущен!');
-  console.log(`📱 Mini App URL: ${process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000'}`);
+  console.log(`📱 Mini App URL: ${process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app'}`);
 });
 
 // Graceful shutdown
