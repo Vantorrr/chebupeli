@@ -252,13 +252,44 @@ bot.catch((err, ctx) => {
   }
 });
 
-// Запуск бота
+// Настройка вебхука или polling
 const PORT = process.env.PORT || 8080;
+const WEBHOOK_URL = process.env.WEBHOOK_URL; // Например: https://your-domain.com/webhook
 
-bot.launch().then(() => {
-  console.log('🤖 Telegram бот Velaro запущен!');
-  console.log(`📱 Mini App URL: ${process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app'}`);
-});
+// Если указан WEBHOOK_URL, используем вебхук, иначе polling
+if (WEBHOOK_URL) {
+  // Настройка вебхука
+  app.use(express.json());
+  
+  app.post('/webhook', (req, res) => {
+    bot.handleUpdate(req.body);
+    res.sendStatus(200);
+  });
+  
+  app.get('/health', (req, res) => {
+    res.json({ status: 'ok', bot: 'running' });
+  });
+  
+  bot.telegram.setWebhook(WEBHOOK_URL + '/webhook').then(() => {
+    console.log('✅ Webhook установлен:', WEBHOOK_URL + '/webhook');
+  }).catch(err => {
+    console.error('❌ Ошибка установки webhook:', err);
+  });
+  
+  app.listen(PORT, () => {
+    console.log(`🚀 Сервер запущен на порту ${PORT}`);
+    console.log(`📡 Webhook: ${WEBHOOK_URL}/webhook`);
+  });
+} else {
+  // Используем polling (для разработки)
+  bot.launch().then(() => {
+    console.log('🤖 Telegram бот Velaro запущен (polling mode)!');
+    console.log(`📱 Mini App URL: ${process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app'}`);
+  }).catch(err => {
+    console.error('❌ Ошибка запуска бота:', err);
+    process.exit(1);
+  });
+}
 
 // Graceful shutdown
 process.once('SIGINT', () => bot.stop('SIGINT'));
