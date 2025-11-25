@@ -1,0 +1,48 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  telegramId    BigInt    @unique
+  username      String?
+  firstName     String?
+  lastName      String?
+  languageCode  String?
+  
+  // Реферальная система
+  referralCode  String    @unique // Код, который пользователь дает другим
+  referredBy    String?   // Код того, кто пригласил этого пользователя
+  referralBalance Float   @default(0.0) // Баланс бонусов в USD
+  
+  // Даты
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Связи
+  referredUsers User[]    @relation("ReferralHistory")
+  referrer      User?     @relation("ReferralHistory", fields: [referredBy], references: [referralCode])
+  
+  orders        Order[]
+}
+
+model Order {
+  id            String    @id @default(uuid())
+  orderId       String    @unique // ID заказа в MobiMatter
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  amount        Float
+  currency      String    @default("USD")
+  status        String    // pending, paid, failed
+  productCode   String
+  
+  createdAt     DateTime  @default(now())
+}
