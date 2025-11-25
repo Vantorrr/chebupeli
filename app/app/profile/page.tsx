@@ -169,7 +169,14 @@ export default function ProfilePage() {
         </div>
 
         {/* Referral Banner */}
-        <div className="bg-gradient-to-r from-[#2F3542] to-[#1A1A1A] rounded-2xl p-5 shadow-xl text-white mb-8 relative overflow-hidden group cursor-pointer active:scale-95 transition-transform">
+        <div 
+          onClick={() => webApp?.showPopup({
+            title: 'Реферальная программа',
+            message: 'Скоро вы сможете приглашать друзей и получать бонусы!\n\nВаш код будет доступен здесь.',
+            buttons: [{type: 'ok'}]
+          })}
+          className="bg-gradient-to-r from-[#2F3542] to-[#1A1A1A] rounded-2xl p-5 shadow-xl text-white mb-8 relative overflow-hidden group cursor-pointer active:scale-95 transition-transform"
+        >
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10"></div>
           <div className="relative z-10">
             <h3 className="font-bold text-lg mb-1">Пригласите друга</h3>

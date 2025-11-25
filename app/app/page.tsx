@@ -126,7 +126,7 @@ export default function Home() {
     return true
   })
   
-  // Для популярных сортируем по цене и берем топ-20
+  // Для популярных сортируем по цене и берем топ-200
   if (activeTab === 'Популярные') {
     filteredCountries = filteredCountries
       .sort((a, b) => {
@@ -134,7 +134,7 @@ export default function Home() {
         const priceB = parseFloat(b.price.replace(/[^0-9.]/g, '')) || 0
         return priceA - priceB
       })
-      .slice(0, 20)
+      .slice(0, 200)
   }
 
   return (
