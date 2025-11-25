@@ -1,5 +1,11 @@
 node_modules
+.next
+out
+build
+dist
+
 # Keep environment variables out of version control
 .env
+.env.local
 
 /lib/generated/prisma

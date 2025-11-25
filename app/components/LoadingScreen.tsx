@@ -8,15 +8,22 @@ export const LoadingScreen = () => {
   const [shouldRender, setShouldRender] = useState(true)
 
   useEffect(() => {
-    // Имитация загрузки + инициализация
-    // В реальности это может быть привязано к webApp.ready()
-    const timer = setTimeout(() => {
+    // Функция скрытия заставки
+    const hideLoader = () => {
       setIsVisible(false)
-      // Ждем окончания анимации исчезновения перед удалением из DOM
-      setTimeout(() => setShouldRender(false), 700)
-    }, 2000) // Показываем заставку 2 секунды
+      setTimeout(() => setShouldRender(false), 500)
+    }
 
-    return () => clearTimeout(timer)
+    // Ждём минимум 1.2 секунды, потом скрываем
+    const minTimer = setTimeout(hideLoader, 1200)
+
+    // Максимум 3 секунды на случай если что-то зависло
+    const maxTimer = setTimeout(hideLoader, 3000)
+
+    return () => {
+      clearTimeout(minTimer)
+      clearTimeout(maxTimer)
+    }
   }, [])
 
   if (!shouldRender) return null
