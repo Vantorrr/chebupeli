@@ -7,8 +7,13 @@ const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN || '8086396950:AAGH20vQT
 
 // Middleware для логирования
 bot.use(async (ctx, next) => {
-  console.log(`[${new Date().toISOString()}] ${ctx.updateType} from ${ctx.from?.id}`);
-  return next();
+  try {
+    console.log(`[${new Date().toISOString()}] ${ctx.updateType} from ${ctx.from?.id}`);
+    return await next();
+  } catch (err) {
+    console.error('Ошибка в middleware:', err);
+    throw err;
+  }
 });
 
 // Функция для создания главного меню
@@ -74,34 +79,53 @@ bot.command('menu', async (ctx) => {
 
 // Обработка текстовых команд
 bot.hears('🌍 Тарифы', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  await ctx.reply('🌍 Выберите страну и тариф:', {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '🌍 Открыть каталог тарифов', web_app: { url: `${webAppUrl}/` } }
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    await ctx.reply('🌍 Выберите страну и тариф:', {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '🌍 Открыть каталог тарифов', web_app: { url: `${webAppUrl}/` } }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике "🌍 Тарифы":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 bot.hears('📲 Мои eSIM', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  await ctx.reply('📲 Ваши eSIM:', {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '📲 Открыть мои eSIM', web_app: { url: `${webAppUrl}/my-esims` } }
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    await ctx.reply('📲 Ваши eSIM:', {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '📲 Открыть мои eSIM', web_app: { url: `${webAppUrl}/my-esims` } }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике "📲 Мои eSIM":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 bot.hears('🛠 Поддержка', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  const supportText = `🛠 Поддержка Velaro
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    const supportText = `🛠 Поддержка Velaro
 
 Мы всегда готовы помочь!
 
@@ -114,60 +138,87 @@ bot.hears('🛠 Поддержка', async (ctx) => {
 • Ошибка при установке eSIM
 • Возврат средств`;
 
-  await ctx.reply(supportText, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '❓ Открыть FAQ', web_app: { url: `${webAppUrl}/faq` } }
-        ],
-        [
-          { text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }
-        ],
-        [
-          { text: '📧 Написать на email', url: `mailto:${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}` }
+    await ctx.reply(supportText, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '❓ Открыть FAQ', web_app: { url: `${webAppUrl}/faq` } }
+          ],
+          [
+            { text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }
+          ],
+          [
+            { text: '📧 Написать на email', url: `mailto:${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}` }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике "🛠 Поддержка":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 bot.hears('📄 Правовая информация', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  const legalText = `📄 Правовая информация Velaro
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    const legalText = `📄 Правовая информация Velaro
 
 Публичная оферта и политика конфиденциальности.
 
 Используя сервис Velaro, вы соглашаетесь с условиями использования.`;
 
-  await ctx.reply(legalText, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } },
-          { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }
+    await ctx.reply(legalText, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } },
+            { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике "📄 Правовая информация":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 bot.hears('🏠 Открыть Velaro', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  await ctx.reply('🏠 Открываю Velaro...', {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '🚀 Открыть приложение', web_app: { url: `${webAppUrl}/` } }
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    await ctx.reply('🏠 Открываю Velaro...', {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '🚀 Открыть приложение', web_app: { url: `${webAppUrl}/` } }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике "🏠 Открыть Velaro":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 // Обработка callback для поддержки
 bot.action('support', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  const supportText = `🛠 Поддержка Velaro
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    const supportText = `🛠 Поддержка Velaro
 
 Свяжитесь с нами:
 • Email: ${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}
@@ -178,57 +229,83 @@ bot.action('support', async (ctx) => {
 • Ошибка при установке eSIM
 • Возврат средств`;
 
-  await ctx.editMessageText(supportText, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '❓ FAQ', web_app: { url: `${webAppUrl}/faq` } }
-        ],
-        [
-          { text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }
-        ],
-        [
-          { text: '◀️ Назад', callback_data: 'back_to_menu' }
+    await ctx.editMessageText(supportText, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '❓ FAQ', web_app: { url: `${webAppUrl}/faq` } }
+          ],
+          [
+            { text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }
+          ],
+          [
+            { text: '◀️ Назад', callback_data: 'back_to_menu' }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике callback "support":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 // Правовая информация
 bot.action('legal', async (ctx) => {
-  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
-  const legalText = `📄 Правовая информация
+  try {
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app';
+    const legalText = `📄 Правовая информация
 
 Публичная оферта и политика конфиденциальности Velaro.
 
 Используя сервис Velaro, вы соглашаетесь с условиями использования.`;
 
-  await ctx.editMessageText(legalText, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } },
-          { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }
-        ],
-        [
-          { text: '◀️ Назад', callback_data: 'back_to_menu' }
+    await ctx.editMessageText(legalText, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } },
+            { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }
+          ],
+          [
+            { text: '◀️ Назад', callback_data: 'back_to_menu' }
+          ]
         ]
-      ]
+      }
+    });
+  } catch (err) {
+    console.error('Ошибка в обработчике callback "legal":', err);
+    try {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
     }
-  });
+  }
 });
 
 // Возврат в меню
 bot.action('back_to_menu', async (ctx) => {
-  await ctx.editMessageText('📱 Главное меню Velaro:', getMainMenu());
+  try {
+    await ctx.editMessageText('📱 Главное меню Velaro:', getMainMenu());
+  } catch (err) {
+    console.error('Ошибка в обработчике callback "back_to_menu":', err);
+    try {
+      await ctx.reply('📱 Главное меню Velaro:', getMainMenu());
+    } catch (e) {
+      console.error('Критическая ошибка:', e);
+    }
+  }
 });
 
 // Обработка всех остальных сообщений
 bot.on('text', async (ctx) => {
   try {
     // Если это не команда, показываем меню
-    if (!ctx.message.text.startsWith('/')) {
+    if (ctx.message && ctx.message.text && !ctx.message.text.startsWith('/')) {
       await ctx.reply('Выберите действие из меню 👇', getMainMenu());
     }
   } catch (err) {
@@ -242,11 +319,20 @@ bot.on('text', async (ctx) => {
 });
 
 // Обработка ошибок
-bot.catch((err, ctx) => {
+bot.catch(async (err, ctx) => {
   console.error('Ошибка в боте:', err);
   console.error('Stack:', err.stack);
+  console.error('Context:', {
+    updateType: ctx?.updateType,
+    from: ctx?.from?.id,
+    chat: ctx?.chat?.id,
+    message: ctx?.message?.text
+  });
+  
   try {
-    ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu').catch(console.error);
+    if (ctx && ctx.reply) {
+      await ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu', getMainMenu());
+    }
   } catch (e) {
     console.error('Не удалось отправить сообщение об ошибке:', e);
   }
@@ -261,9 +347,14 @@ if (WEBHOOK_URL) {
   // Настройка вебхука
   app.use(express.json());
   
-  app.post('/webhook', (req, res) => {
-    bot.handleUpdate(req.body);
-    res.sendStatus(200);
+  app.post('/webhook', async (req, res) => {
+    try {
+      await bot.handleUpdate(req.body);
+      res.sendStatus(200);
+    } catch (err) {
+      console.error('Ошибка обработки webhook:', err);
+      res.sendStatus(200); // Все равно возвращаем 200, чтобы Telegram не повторял запрос
+    }
   });
   
   app.get('/health', (req, res) => {
