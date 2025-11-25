@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { TelegramProvider } from '@/components/TelegramProvider'
+import { CurrencyProvider } from '@/components/CurrencyProvider'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import Script from 'next/script'
 
@@ -19,8 +20,10 @@ export default function RootLayout({
       <body>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
         <TelegramProvider>
-          <LoadingScreen />
-          {children}
+          <CurrencyProvider>
+            <LoadingScreen />
+            {children}
+          </CurrencyProvider>
         </TelegramProvider>
       </body>
     </html>

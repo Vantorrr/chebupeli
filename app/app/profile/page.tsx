@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { useTelegram } from '@/components/TelegramProvider'
+import { useCurrency } from '@/components/CurrencyProvider'
 import { Logo } from '@/components/Logo'
 import { useEffect, useState } from 'react'
 
 // Иконки (SVG Components)
+// ... (остальной код иконок остается)
 const Icons = {
   User: () => (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -36,24 +38,14 @@ const Icons = {
 export default function ProfilePage() {
   const router = useRouter()
   const { webApp } = useTelegram()
+  const { currency, toggleCurrency } = useCurrency()
   const [user, setUser] = useState<any>(null)
-  const [currency, setCurrency] = useState('USD')
 
   useEffect(() => {
     if (webApp) {
       setUser(webApp.initDataUnsafe?.user)
     }
-    // Загружаем сохраненную валюту
-    const savedCurrency = localStorage.getItem('velaro_currency')
-    if (savedCurrency) setCurrency(savedCurrency)
   }, [webApp])
-
-  const toggleCurrency = () => {
-    const newCurrency = currency === 'USD' ? 'RUB' : 'USD'
-    setCurrency(newCurrency)
-    localStorage.setItem('velaro_currency', newCurrency)
-    // Здесь можно добавить логику обновления цен во всем приложении через Context или Event
-  }
 
   type MenuItem = {
     icon: () => JSX.Element
@@ -144,7 +136,7 @@ export default function ProfilePage() {
         </div>
         
         <div className="bg-green-50 border border-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold shadow-sm">
-          $0.00 USD
+          {currency === 'USD' ? '$0.00 USD' : '0 ₽'}
         </div>
       </div>
 
