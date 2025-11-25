@@ -13,11 +13,11 @@ export function Logo({ className = '', size = 'md' }: { className?: string; size
         src="/velaro-logo.png"
         alt="Velaro"
         className={`${heightClasses[size]} w-auto object-contain`}
-        style={{ 
-          maxHeight: size === 'lg' ? '180px' : size === 'md' ? '144px' : '112px',
-          width: 'auto',
-          imageRendering: 'high-quality'
-        }}
+            style={{
+              maxHeight: size === 'lg' ? '180px' : size === 'md' ? '144px' : '112px',
+              width: 'auto',
+              imageRendering: 'auto' as const
+            }}
       />
     </div>
   )
