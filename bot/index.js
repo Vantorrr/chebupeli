@@ -1,0 +1,233 @@
+const { Telegraf, Markup } = require('telegraf');
+const express = require('express');
+require('dotenv').config();
+
+const app = express();
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN || '8086396950:AAGH20vQTc2SDzTFnsEeKNZL4zmcUy3ewR4');
+
+// Middleware для логирования
+bot.use(async (ctx, next) => {
+  console.log(`[${new Date().toISOString()}] ${ctx.updateType} from ${ctx.from?.id}`);
+  return next();
+});
+
+// Функция для создания главного меню
+const getMainMenu = () => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  
+  return Markup.keyboard([
+    [
+      Markup.button.webApp('🌍 Тарифы', `${webAppUrl}/`),
+      Markup.button.webApp('📲 Мои eSIM', `${webAppUrl}/my-esims`)
+    ],
+    [
+      Markup.button.webApp('🛠 Поддержка', `${webAppUrl}/support`),
+      Markup.button.webApp('📄 Правовая информация', `${webAppUrl}/legal`)
+    ],
+    [
+      Markup.button.webApp('🏠 Открыть Velaro', `${webAppUrl}/`)
+    ]
+  ]).resize().persistent();
+};
+
+// Команда /start
+bot.start(async (ctx) => {
+  const userName = ctx.from?.first_name || 'пользователь';
+  
+  const welcomeText = `🌴 Добро пожаловать в Velaro, ${userName}!
+
+🚀 Цифровые интернет-пакеты для путешествий по всему миру.
+
+✨ Что мы предлагаем:
+• 🌍 200+ стран и регионов
+• ⚡ Мгновенная активация eSIM
+• 💰 Выгодные цены
+• 📱 Поддержка всех устройств
+
+Выберите действие из меню ниже 👇`;
+
+  await ctx.reply(welcomeText, getMainMenu());
+});
+
+// Команда /menu
+bot.command('menu', async (ctx) => {
+  await ctx.reply('📱 Главное меню Velaro:', getMainMenu());
+});
+
+// Обработка текстовых команд
+bot.hears('🌍 Тарифы', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  await ctx.reply('🌍 Выберите страну и тариф:', {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '🌍 Открыть каталог тарифов', web_app: { url: `${webAppUrl}/` } }
+        ]
+      ]
+    }
+  });
+});
+
+bot.hears('📲 Мои eSIM', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  await ctx.reply('📲 Ваши eSIM:', {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '📲 Открыть мои eSIM', web_app: { url: `${webAppUrl}/my-esims` } }
+        ]
+      ]
+    }
+  });
+});
+
+bot.hears('🛠 Поддержка', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const supportText = `🛠 Поддержка Velaro
+
+Мы всегда готовы помочь!
+
+📞 Свяжитесь с нами:
+• Email: ${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}
+• Telegram: @${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}
+
+❓ Частые вопросы:
+• Проблема с оплатой
+• Ошибка при установке eSIM
+• Возврат средств`;
+
+  await ctx.reply(supportText, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '❓ Открыть FAQ', web_app: { url: `${webAppUrl}/faq` } }
+        ],
+        [
+          { text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }
+        ],
+        [
+          { text: '📧 Написать на email', url: `mailto:${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}` }
+        ]
+      ]
+    }
+  });
+});
+
+bot.hears('📄 Правовая информация', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const legalText = `📄 Правовая информация Velaro
+
+Публичная оферта и политика конфиденциальности.
+
+Используя сервис Velaro, вы соглашаетесь с условиями использования.`;
+
+  await ctx.reply(legalText, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } },
+          { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }
+        ]
+      ]
+    }
+  });
+});
+
+bot.hears('🏠 Открыть Velaro', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  await ctx.reply('🏠 Открываю Velaro...', {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '🚀 Открыть приложение', web_app: { url: `${webAppUrl}/` } }
+        ]
+      ]
+    }
+  });
+});
+
+// Обработка callback для поддержки
+bot.action('support', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const supportText = `🛠 Поддержка Velaro
+
+Свяжитесь с нами:
+• Email: ${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}
+• Telegram: @${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}
+
+Быстрые решения:
+• Проблема с оплатой
+• Ошибка при установке eSIM
+• Возврат средств`;
+
+  await ctx.editMessageText(supportText, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '❓ FAQ', web_app: { url: `${webAppUrl}/faq` } }
+        ],
+        [
+          { text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }
+        ],
+        [
+          { text: '◀️ Назад', callback_data: 'back_to_menu' }
+        ]
+      ]
+    }
+  });
+});
+
+// Правовая информация
+bot.action('legal', async (ctx) => {
+  const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000';
+  const legalText = `📄 Правовая информация
+
+Публичная оферта и политика конфиденциальности Velaro.
+
+Используя сервис Velaro, вы соглашаетесь с условиями использования.`;
+
+  await ctx.editMessageText(legalText, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } },
+          { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }
+        ],
+        [
+          { text: '◀️ Назад', callback_data: 'back_to_menu' }
+        ]
+      ]
+    }
+  });
+});
+
+// Возврат в меню
+bot.action('back_to_menu', async (ctx) => {
+  await ctx.editMessageText('📱 Главное меню Velaro:', getMainMenu());
+});
+
+// Обработка всех остальных сообщений
+bot.on('text', async (ctx) => {
+  // Если это не команда, показываем меню
+  if (!ctx.message.text.startsWith('/')) {
+    await ctx.reply('Выберите действие из меню 👇', getMainMenu());
+  }
+});
+
+// Обработка ошибок
+bot.catch((err, ctx) => {
+  console.error('Ошибка в боте:', err);
+  ctx.reply('Произошла ошибка. Попробуйте позже или используйте /menu');
+});
+
+// Запуск бота
+const PORT = process.env.PORT || 8080;
+
+bot.launch().then(() => {
+  console.log('🤖 Telegram бот Velaro запущен!');
+  console.log(`📱 Mini App URL: ${process.env.TELEGRAM_WEBAPP_URL || 'http://localhost:3000'}`);
+});
+
+// Graceful shutdown
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));

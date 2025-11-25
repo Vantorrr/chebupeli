@@ -1,0 +1,21 @@
+{
+  "name": "velaro-telegram-app",
+  "version": "1.0.0",
+  "description": "Velaro - Telegram Mini App для продажи eSIM",
+  "private": true,
+  "workspaces": [
+    "app",
+    "bot"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:bot\" \"npm run dev:app\"",
+    "dev:bot": "nodemon bot/index.js",
+    "dev:app": "cd app && npm run dev",
+    "build": "cd app && npm run build",
+    "start": "node bot/index.js"
+  },
+  "keywords": ["telegram", "esim", "velaro"],
+  "author": "",
+  "license": "ISC"
+}
+
