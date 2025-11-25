@@ -8,5 +8,5 @@ cmds = ["cd app && npm ci"]
 cmds = ["cd app && npm run build"]
 
 [start]
-cmd = "cd app && PORT=${PORT:-3000} npm start"
+cmd = "cd app && npm start"
 
