@@ -2,8 +2,16 @@ const { Telegraf, Markup } = require('telegraf');
 const express = require('express');
 require('dotenv').config();
 
+// Проверка обязательных переменных
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8086396950:AAGH20vQTc2SDzTFnsEeKNZL4zmcUy3ewR4';
+
+if (!BOT_TOKEN) {
+  console.error('❌ TELEGRAM_BOT_TOKEN не установлен!');
+  process.exit(1);
+}
+
 const app = express();
-const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN || '8086396950:AAGH20vQTc2SDzTFnsEeKNZL4zmcUy3ewR4');
+const bot = new Telegraf(BOT_TOKEN);
 
 // Middleware для логирования
 bot.use(async (ctx, next) => {
@@ -393,30 +401,45 @@ if (WEBHOOK_URL) {
   });
   
   // Запускаем сервер сначала
-  app.listen(PORT, async () => {
+  app.listen(PORT, '0.0.0.0', async () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
+    console.log(`🌐 Слушаем на 0.0.0.0:${PORT}`);
+    
+    // Небольшая задержка перед установкой webhook
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Устанавливаем webhook после запуска сервера
     try {
       const webhookUrl = `${WEBHOOK_URL}/webhook`;
-      await bot.telegram.setWebhook(webhookUrl);
-      console.log('✅ Webhook установлен:', webhookUrl);
+      console.log(`🔗 Устанавливаю webhook: ${webhookUrl}`);
+      
+      const result = await bot.telegram.setWebhook(webhookUrl);
+      console.log('✅ Webhook установлен:', result);
       
       // Проверяем статус webhook
       const webhookInfo = await bot.telegram.getWebhookInfo();
       console.log('📡 Webhook info:', JSON.stringify(webhookInfo, null, 2));
+      
+      if (webhookInfo.url !== webhookUrl) {
+        console.warn('⚠️  Webhook URL не совпадает! Ожидалось:', webhookUrl, 'Получено:', webhookInfo.url);
+      }
     } catch (err) {
       console.error('❌ Ошибка установки webhook:', err);
+      console.error('Message:', err.message);
       console.error('Stack:', err.stack);
+      console.error('Попробую продолжить работу...');
     }
   });
 } else {
   // Используем polling (для разработки)
+  console.log('⚠️  WEBHOOK_URL не установлен, используем polling mode');
   bot.launch().then(() => {
     console.log('🤖 Telegram бот Velaro запущен (polling mode)!');
     console.log(`📱 Mini App URL: ${process.env.TELEGRAM_WEBAPP_URL || 'https://velaro-mini-app-production.up.railway.app'}`);
   }).catch(err => {
     console.error('❌ Ошибка запуска бота:', err);
+    console.error('Message:', err.message);
+    console.error('Stack:', err.stack);
     process.exit(1);
   });
 }
