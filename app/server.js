@@ -30,19 +30,24 @@ if (BOT_TOKEN) {
   // Главное меню
   const { Markup } = require('telegraf');
   const getMainMenu = () => {
-    // Убираем слэш в конце, если есть
-    const webAppUrl = (process.env.TELEGRAM_WEBAPP_URL || '').replace(/\/$/, '');
+    // Базовый URL мини-аппа
+    const rawWebAppUrl = process.env.TELEGRAM_WEBAPP_URL || '';
+    // Убираем все лишние слэши в конце
+    const cleanWebAppUrl = rawWebAppUrl.replace(/\/+$/, '');
+    // Для корня Telegram гораздо стабильнее работает с явным слэшем в конце
+    const rootUrl = `${cleanWebAppUrl}/`;
+
     return Markup.keyboard([
       [
-        Markup.button.webApp('🌍 Тарифы', webAppUrl),
-        Markup.button.webApp('📲 Мои eSIM', `${webAppUrl}/my-esims`)
+        Markup.button.webApp('🌍 Тарифы', rootUrl),
+        Markup.button.webApp('📲 Мои eSIM', `${cleanWebAppUrl}/my-esims`)
       ],
       [
-        Markup.button.webApp('🛠 Поддержка', `${webAppUrl}/support`),
-        Markup.button.webApp('📄 Правовая информация', `${webAppUrl}/legal`)
+        Markup.button.webApp('🛠 Поддержка', `${cleanWebAppUrl}/support`),
+        Markup.button.webApp('📄 Правовая информация', `${cleanWebAppUrl}/legal`)
       ],
       [
-        Markup.button.webApp('🏠 Открыть Velaro', webAppUrl)
+        Markup.button.webApp('🏠 Открыть Velaro', rootUrl)
       ]
     ]).resize().persistent();
   };
@@ -61,26 +66,30 @@ if (BOT_TOKEN) {
 
   // Текстовые кнопки
   bot.hears('🌍 Тарифы', async (ctx) => {
-    const webAppUrl = (process.env.TELEGRAM_WEBAPP_URL || '').replace(/\/$/, '');
+    const rawWebAppUrl = process.env.TELEGRAM_WEBAPP_URL || '';
+    const cleanWebAppUrl = rawWebAppUrl.replace(/\/+$/, '');
+    const rootUrl = `${cleanWebAppUrl}/`;
     await ctx.reply('🌍 Выберите страну и тариф:', {
-      reply_markup: { inline_keyboard: [[{ text: '🌍 Открыть каталог тарифов', web_app: { url: webAppUrl } }]] }
+      reply_markup: { inline_keyboard: [[{ text: '🌍 Открыть каталог тарифов', web_app: { url: rootUrl } }]] }
     });
   });
 
   bot.hears('📲 Мои eSIM', async (ctx) => {
-    const webAppUrl = (process.env.TELEGRAM_WEBAPP_URL || '').replace(/\/$/, '');
+    const rawWebAppUrl = process.env.TELEGRAM_WEBAPP_URL || '';
+    const cleanWebAppUrl = rawWebAppUrl.replace(/\/+$/, '');
     await ctx.reply('📲 Ваши eSIM:', {
-      reply_markup: { inline_keyboard: [[{ text: '📲 Открыть мои eSIM', web_app: { url: `${webAppUrl}/my-esims` } }]] }
+      reply_markup: { inline_keyboard: [[{ text: '📲 Открыть мои eSIM', web_app: { url: `${cleanWebAppUrl}/my-esims` } }]] }
     });
   });
 
   bot.hears('🛠 Поддержка', async (ctx) => {
-    const webAppUrl = (process.env.TELEGRAM_WEBAPP_URL || '').replace(/\/$/, '');
+    const rawWebAppUrl = process.env.TELEGRAM_WEBAPP_URL || '';
+    const cleanWebAppUrl = rawWebAppUrl.replace(/\/+$/, '');
     const supportText = `🛠 Поддержка Velaro\n\nМы всегда готовы помочь!\n\n📞 Свяжитесь с нами:\n• Email: ${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}\n• Telegram: @${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}`;
     await ctx.reply(supportText, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: '❓ Открыть FAQ', web_app: { url: `${webAppUrl}/faq` } }],
+          [{ text: '❓ Открыть FAQ', web_app: { url: `${cleanWebAppUrl}/faq` } }],
           [{ text: '💬 Связаться с поддержкой', url: `https://t.me/${process.env.SUPPORT_BOT_USERNAME || 'velaro_support'}` }],
           [{ text: '📧 Написать на email', url: `mailto:${process.env.SUPPORT_EMAIL || 'velaroite@gmail.com'}` }]
         ]
@@ -89,21 +98,24 @@ if (BOT_TOKEN) {
   });
 
   bot.hears('📄 Правовая информация', async (ctx) => {
-    const webAppUrl = (process.env.TELEGRAM_WEBAPP_URL || '').replace(/\/$/, '');
+    const rawWebAppUrl = process.env.TELEGRAM_WEBAPP_URL || '';
+    const cleanWebAppUrl = rawWebAppUrl.replace(/\/+$/, '');
     const legalText = `📄 Правовая информация Velaro\n\nПубличная оферта и политика конфиденциальности.\n\nИспользуя сервис Velaro, вы соглашаетесь с условиями использования.`;
     await ctx.reply(legalText, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: '📋 Публичная оферта', web_app: { url: `${webAppUrl}/offer` } }, { text: '🔒 Политика конфиденциальности', web_app: { url: `${webAppUrl}/privacy` } }]
+          [{ text: '📋 Публичная оферта', web_app: { url: `${cleanWebAppUrl}/offer` } }, { text: '🔒 Политика конфиденциальности', web_app: { url: `${cleanWebAppUrl}/privacy` } }]
         ]
       }
     });
   });
 
   bot.hears('🏠 Открыть Velaro', async (ctx) => {
-    const webAppUrl = (process.env.TELEGRAM_WEBAPP_URL || '').replace(/\/$/, '');
+    const rawWebAppUrl = process.env.TELEGRAM_WEBAPP_URL || '';
+    const cleanWebAppUrl = rawWebAppUrl.replace(/\/+$/, '');
+    const rootUrl = `${cleanWebAppUrl}/`;
     await ctx.reply('🏠 Открываю Velaro...', {
-      reply_markup: { inline_keyboard: [[{ text: '🚀 Открыть приложение', web_app: { url: webAppUrl } }]] }
+      reply_markup: { inline_keyboard: [[{ text: '🚀 Открыть приложение', web_app: { url: rootUrl } }]] }
     });
   });
 
