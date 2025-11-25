@@ -361,19 +361,30 @@ const WEBHOOK_URL = process.env.WEBHOOK_URL; // Например: https://your-d
 if (WEBHOOK_URL) {
   // Настройка вебхука
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  
+  // Корневой путь для проверки
+  app.get('/', (req, res) => {
+    res.json({ 
+      status: 'ok', 
+      service: 'velaro-telegram-bot',
+      webhook: `${WEBHOOK_URL}/webhook`
+    });
+  });
+  
+  app.get('/health', (req, res) => {
+    res.json({ status: 'ok', bot: 'running' });
+  });
   
   app.post('/webhook', async (req, res) => {
     try {
+      console.log('📥 Webhook получен:', req.body?.update_id);
       await bot.handleUpdate(req.body);
       res.sendStatus(200);
     } catch (err) {
       console.error('Ошибка обработки webhook:', err);
       res.sendStatus(200); // Все равно возвращаем 200, чтобы Telegram не повторял запрос
     }
-  });
-  
-  app.get('/health', (req, res) => {
-    res.json({ status: 'ok', bot: 'running' });
   });
   
   // Запускаем сервер сначала
