@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Velaro - Telegram Mini App для продажи eSIM",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev:bot\" \"npm run dev:app\"",
     "dev:bot": "nodemon bot/index.js",
