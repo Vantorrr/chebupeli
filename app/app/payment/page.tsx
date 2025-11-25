@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTelegram } from '@/components/TelegramProvider'
 import QRCode from 'qrcode.react'
+import axios from 'axios'
 
 export default function PaymentPage() {
   const router = useRouter()
