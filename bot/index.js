@@ -302,20 +302,43 @@ bot.action('back_to_menu', async (ctx) => {
 });
 
 // Обработка неизвестных текстовых сообщений (должен быть последним)
+// Используем middleware для отслеживания обработанных сообщений
+let processedMessages = new Set();
+
+bot.use(async (ctx, next) => {
+  // Сбрасываем флаг перед обработкой
+  if (ctx.message?.message_id) {
+    processedMessages.delete(ctx.message.message_id);
+  }
+  return next();
+});
+
 bot.on('text', async (ctx) => {
   try {
     const text = ctx.message?.text;
-    if (!text) return;
+    const messageId = ctx.message?.message_id;
+    
+    if (!text || !messageId) return;
     
     // Пропускаем команды (они обрабатываются через bot.command)
     if (text.startsWith('/')) return;
     
     // Пропускаем кнопки меню (они обрабатываются через bot.hears)
     const menuButtons = ['🌍 Тарифы', '📲 Мои eSIM', '🛠 Поддержка', '📄 Правовая информация', '🏠 Открыть Velaro'];
-    if (menuButtons.includes(text)) return;
+    if (menuButtons.includes(text)) {
+      // Помечаем как обработанное
+      processedMessages.add(messageId);
+      return;
+    }
+    
+    // Проверяем, не было ли уже обработано
+    if (processedMessages.has(messageId)) {
+      return;
+    }
     
     // Для всех остальных текстовых сообщений показываем меню
     await ctx.reply('Выберите действие из меню 👇', getMainMenu());
+    processedMessages.add(messageId);
   } catch (err) {
     console.error('Ошибка обработки текста:', err);
     try {
