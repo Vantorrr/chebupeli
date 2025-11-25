@@ -6,6 +6,8 @@ interface TelegramWebApp {
   ready: () => void
   expand: () => void
   close: () => void
+  showAlert: (message: string) => void
+  showPopup: (params: { title?: string; message: string; buttons?: Array<{ id?: string; type?: string; text: string }> }) => void
   MainButton: {
     text: string
     color: string
